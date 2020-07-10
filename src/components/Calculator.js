@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Calculator.css";
 
 function Calculator() {
-  const [num, numMath] = useState();
+  const [num, numMath] = useState("");
   const [mathSign, mathSignFunc] = useState("");
 
   // const symbols = {
@@ -35,28 +35,40 @@ function Calculator() {
   }
 
   function handleClear() {
-    numMath(prevNum => (prevNum = 0));
+    numMath(prevNum => (prevNum = ""));
+    mathSignFunc(prevSign => (prevSign = ""));
   }
 
   function click(event) {
     const { name } = event.target;
-    if (!num && !mathSign) {
-      numMath(prevNum => (prevNum = name));
+    if (!mathSign) {
+      numMath(prevNum => (prevNum = prevNum + "" + name));
+      console.log(num);
     } else if (mathSign === "/") {
       function calc(a, b) {
         return a / b;
       }
       numMath(prevNum => (prevNum = calc(prevNum, name)));
+      mathSignFunc(prevSign => (prevSign = ""));
+      console.log(num, name, mathSign);
     } else if (mathSign === "+") {
       function calc(a, b) {
         return a + b;
       }
       numMath(prevNum => (prevNum = calc(prevNum, name)));
+      mathSignFunc(prevSign => (prevSign = ""));
     } else if (mathSign === "-") {
       function calc(a, b) {
         return a - b;
       }
       numMath(prevNum => (prevNum = calc(prevNum, name)));
+      mathSignFunc(prevSign => (prevSign = ""));
+    } else if (mathSign === "*") {
+      function calc(a, b) {
+        return a * b;
+      }
+      numMath(prevNum => (prevNum = calc(prevNum, name)));
+      mathSignFunc(prevSign => (prevSign = ""));
     }
   }
 
