@@ -2,6 +2,7 @@ p {
   color: rgb(255, 255, 255);
   text-align: right;
   font-family: "Roboto Mono", monospace;
+  font-size: 35px;
 }
 
 button {
@@ -9,6 +10,15 @@ button {
   width: 50px;
   height: 50px;
   background-color: green;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  font-family: "Roboto Mono", monospace;
+  font-size: 20px;
+}
+
+.button-big {
+  width: 100px;
+  border-radius: 10%;
 }
 
 .button-container {
@@ -21,10 +31,11 @@ button {
 .container {
   /* position: absolute; */
   border: 3px solid green;
-  margin: 30% auto 30% auto;
+  margin: 20% auto 30% auto;
   width: 250px;
   height: 400px;
   background-color: rgb(169, 212, 169);
+  border-radius: 3%;
 }
 
 .calc-display {
