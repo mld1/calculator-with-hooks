@@ -2,84 +2,106 @@ import React, { useState } from "react";
 import "./Calculator.css";
 
 function Calculator() {
+  const [numDisplay, numDisplaySet] = useState("");
   const [num, numMath] = useState("");
-  const [mathSign, mathSignFunc] = useState("");
-
-  // const symbols = {
-  //   "/": /;
-  // }
-
-  // function click(event) {
-  //   const { name } = event.target;
-  //   console.log(numMath, mathSign);
-
-  //   if (num === 0) {
-  //     numMath(prevNum => (prevNum = name));
-  //   } else {
-  //     num2Math(prevNum => (prevNum = name));
-  //   }
-  //   if (mathSign === "/") {
-  //     numMath(prevNum => (prevNum = prevNum / num2));
-  //   }
-  // }
-
-  // function mathSignSet(event) {
-  //   const { name } = event.target;
-  //   mathSignFunc(prevSign => (prevSign = name));
-  //   console.log("the sign is in the stars");
-  // }
+  const [num2, num2Set] = useState("");
+  const [mathSign, mathSignFunc] = useState("=");
+  const [mathString, mathStringFunc] = useState("");
 
   function mathSignSet(event) {
     const { name } = event.target;
-    mathSignFunc(prevSign => (prevSign = name));
+    if (mathSign === "=") {
+      mathSignFunc(prevSign => (prevSign = name));
+      mathStringFunc(prevString => (prevString = prevString + "" + name));
+    } else {
+      handleEquals();
+      mathSignFunc(prevSign => (prevSign = name));
+      mathStringFunc(prevString => (prevString = prevString + "" + name));
+      console.log("boo!" + mathSign);
+    }
   }
 
   function handleClear() {
     numMath(prevNum => (prevNum = ""));
-    mathSignFunc(prevSign => (prevSign = ""));
+    mathSignFunc(prevSign => (prevSign = "="));
+    mathStringFunc(prevString => (prevString = ""));
+    num2Set(prevNum => (prevNum = ""));
+    numDisplaySet(prevNum => "");
+  }
+
+  function handleEquals() {
+    mathStringFunc(prevString => (prevString = prevString + "="));
+    console.log(mathString);
+    if (mathSign === "/") {
+      function calc(a, b) {
+        return parseFloat(a) / parseFloat(b);
+      }
+      mathSignFunc(prevSign => (prevSign = "="));
+      numDisplaySet(prevNum => (prevNum = "" + calc(num, num2)));
+      numMath(prevNum => (prevNum = calc(num, num2)));
+      // num2Set(prevNum => (prevNum = ""));
+      console.log(numDisplay, num2, mathSign);
+    } else if (mathSign === "+") {
+      function calc(a, b) {
+        return parseFloat(a) + parseFloat(b);
+      }
+      mathSignFunc(prevSign => (prevSign = "="));
+      numDisplaySet(prevNum => (prevNum = "" + calc(num, num2)));
+      numMath(prevNum => (prevNum = "" + calc(num, num2)));
+      // num2Set(prevNum => (prevNum = ""));
+    } else if (mathSign === "-") {
+      function calc(a, b) {
+        return parseFloat(a) - parseFloat(b);
+      }
+      mathSignFunc(prevSign => (prevSign = "="));
+      numDisplaySet(prevNum => "" + calc(num, num2));
+      numMath(prevNum => (prevNum = calc(num, num2)));
+      // num2Set(prevNum => (prevNum = ""));
+    } else if (mathSign === "*") {
+      function calc(a, b) {
+        return parseFloat(a) * parseFloat(b);
+      }
+      mathSignFunc(prevSign => (prevSign = "="));
+      numDisplaySet(prevNum => "" + calc(num, num2));
+      numMath(prevNum => (prevNum = calc(num, num2)));
+      // num2Set(prevNum => (prevNum = ""));
+    }
   }
 
   function click(event) {
     const { name } = event.target;
-    if (!mathSign) {
+    console.log(isNaN(parseInt(mathString[mathString.length - 1])));
+    mathStringFunc(prevString => (prevString = prevString + "" + name));
+    if (mathSign === "=" && !num2) {
       numMath(prevNum => (prevNum = prevNum + "" + name));
-      console.log(num);
-    } else if (mathSign === "/") {
-      function calc(a, b) {
-        return a / b;
-      }
-      numMath(prevNum => (prevNum = calc(prevNum, name)));
-      mathSignFunc(prevSign => (prevSign = ""));
-      console.log(num, name, mathSign);
-    } else if (mathSign === "+") {
-      function calc(a, b) {
-        return a + b;
-      }
-      numMath(prevNum => (prevNum = calc(prevNum, name)));
-      mathSignFunc(prevSign => (prevSign = ""));
-    } else if (mathSign === "-") {
-      function calc(a, b) {
-        return a - b;
-      }
-      numMath(prevNum => (prevNum = calc(prevNum, name)));
-      mathSignFunc(prevSign => (prevSign = ""));
-    } else if (mathSign === "*") {
-      function calc(a, b) {
-        return a * b;
-      }
-      numMath(prevNum => (prevNum = calc(prevNum, name)));
-      mathSignFunc(prevSign => (prevSign = ""));
+      numDisplaySet(prevNum => (prevNum = prevNum + "" + name));
+      console.log(num + "hi");
+    } else if (name === "+/-" && !num2) {
+      num >= 0
+        ? numMath(prevNum => (prevNum = prevNum * -1))
+        : numMath(prevNum => (prevNum = Math.abs(prevNum)));
+    } else if (
+      isNaN(parseInt(mathString[mathString.length - 1])) === true &&
+      mathString[mathString.length - 1] !== "."
+    ) {
+      num2Set(prevNum => (prevNum = "" + name));
+      numDisplaySet(prevNum => (prevNum = "" + name));
+      console.log("karatee", num, num2, mathString);
+    } else {
+      console.log("click long num");
+      num2Set(prevNum => (prevNum = prevNum + "" + name));
+      numDisplaySet(prevNum => (prevNum = prevNum + "" + name));
     }
   }
 
   return (
     <div className="container">
-      <p className="calc-display">{num}</p>
+      <p className="calc-display">{numDisplay}</p>
       <div className="button-container">
         <button className="button-1" onClick={handleClear} name="C">
           C
         </button>
-        <button className="button-1" onClick={mathSignSet} name="+/-">
+        <button className="button-1" onClick={click} name="+/-">
           +/-
         </button>
         <button className="button-1" onClick={click} name="%">
@@ -127,10 +149,10 @@ function Calculator() {
         <button className="button-big" onClick={click} name="0">
           0
         </button>
-        <button className="button-1" onClick={mathSignSet} name=".">
+        <button className="button-1" onClick={click} name=".">
           .
         </button>
-        <button className="button-1" onClick={mathSignSet} name="=">
+        <button className="button-1" onClick={handleEquals} name="=">
           =
         </button>
       </div>
