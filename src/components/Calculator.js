@@ -13,6 +13,14 @@ function Calculator() {
     if (mathSign === "=") {
       mathSignFunc(prevSign => (prevSign = name));
       mathStringFunc(prevString => (prevString = prevString + "" + name));
+    } else if (
+      isNaN(parseInt(mathString[mathString.length - 1])) === true &&
+      name === "-" &&
+      mathString[mathString.length - 1] !== "="
+    ) {
+      num2Set(prevNum => (prevNum = prevNum + "-"));
+      mathStringFunc(prevString => (prevString = prevString + "" + name));
+      console.log(num2, "what", mathSign);
     } else {
       handleEquals();
       mathSignFunc(prevSign => (prevSign = name));
@@ -32,6 +40,14 @@ function Calculator() {
   function handleEquals() {
     mathStringFunc(prevString => (prevString = prevString + "="));
     console.log(mathString);
+    if (num2[num2.length - 1] === "%") {
+      num2Set(
+        prevNum =>
+          (prevNum = (prevNum.substring(0, prevNum.length - 2) / 100) * num)
+      );
+      numDisplaySet(prevNum => (prevNum = num2));
+      console.log("in the %", num2);
+    }
     if (mathSign === "/") {
       function calc(a, b) {
         return parseFloat(a) / parseFloat(b);
@@ -66,25 +82,55 @@ function Calculator() {
       numMath(prevNum => (prevNum = calc(num, num2)));
       // num2Set(prevNum => (prevNum = ""));
     }
+    // else if (mathSign === "%") {
+    //   function calc(a, b) {
+    //     return parseFloat(a) * parseFloat(b);
+    //   }
+    //   mathSignFunc(prevSign => (prevSign = "="));
+    //   numDisplaySet(prevNum => "" + calc(num, num2));
+    //   numMath(prevNum => (prevNum = calc(num, num2)));
+    //   // num2Set(prevNum => (prevNum = ""));
   }
 
   function click(event) {
     const { name } = event.target;
+    if (num2[num2.length - 1] === "%") {
+      num2Set(
+        prevNum =>
+          (prevNum = (prevNum.substring(0, prevNum.length - 2) / 100) * num)
+      );
+      numDisplaySet(prevNum => (prevNum = num2));
+      console.log("in the %", num2);
+    }
     console.log(isNaN(parseInt(mathString[mathString.length - 1])));
     mathStringFunc(prevString => (prevString = prevString + "" + name));
-    if (mathSign === "=" && !num2) {
+    if (mathSign === "=" && !num2 && name !== "!") {
       numMath(prevNum => (prevNum = prevNum + "" + name));
       numDisplaySet(prevNum => (prevNum = prevNum + "" + name));
       console.log(num + "hi");
-    } else if (name === "+/-" && !num2) {
+    } else if (name === "!") {
       num >= 0
         ? numMath(prevNum => (prevNum = prevNum * -1))
         : numMath(prevNum => (prevNum = Math.abs(prevNum)));
+      numDisplay >= 0
+        ? numDisplaySet(prevNum => (prevNum = prevNum * -1))
+        : numDisplaySet(prevNum => (prevNum = Math.abs(prevNum)));
+      mathStringFunc(prevString => (prevString = prevString + "" + name));
+    } else if (
+      isNaN(parseInt(mathString[mathString.length - 1])) === true &&
+      mathString[mathString.length - 1] !== "." &&
+      num2 !== "-"
+      // mathString[mathString.length - 1] !== "!"
+    ) {
+      num2Set(prevNum => (prevNum = "" + name));
+      numDisplaySet(prevNum => (prevNum = "" + name));
+      console.log("karatee", num, num2, mathString);
     } else if (
       isNaN(parseInt(mathString[mathString.length - 1])) === true &&
       mathString[mathString.length - 1] !== "."
+      // mathString[mathString.length - 1] !== "!"
     ) {
-      num2Set(prevNum => (prevNum = "" + name));
+      num2Set(prevNum => (prevNum = "-" + name));
       numDisplaySet(prevNum => (prevNum = "" + name));
       console.log("karatee", num, num2, mathString);
     } else {
@@ -101,7 +147,7 @@ function Calculator() {
         <button className="button-1" onClick={handleClear} name="C">
           C
         </button>
-        <button className="button-1" onClick={click} name="+/-">
+        <button className="button-1" onClick={click} name="!">
           +/-
         </button>
         <button className="button-1" onClick={click} name="%">
